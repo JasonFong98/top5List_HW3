@@ -42,6 +42,17 @@ export const useGlobalStore = () => {
         const { type, payload } = action;
         switch (type) {
             // LIST UPDATE OF ITS NAME
+
+            case GlobalStoreActionType.ADD_LIST: {
+                return setStore({
+                    idNamePairs: store.idNamePairs,
+                    currentList: store.currentList,
+                    newListCounter: store.newListCounter++,
+                    isListNameEditActive: store.isItemEditActive,
+                    isItemEditActive: store.isItemEditActive,
+                    listMarkedForDeletion: store.listMarkedForDeletion,
+                });
+            }
             case GlobalStoreActionType.CHANGE_LIST_NAME: {
                 return setStore({
                     idNamePairs: payload.idNamePairs,
@@ -103,6 +114,27 @@ export const useGlobalStore = () => {
     // THESE ARE THE FUNCTIONS THAT WILL UPDATE OUR STORE AND
     // DRIVE THE STATE OF THE APPLICATION. WE'LL CALL THESE IN 
     // RESPONSE TO EVENTS INSIDE OUR COMPONENTS.
+
+    store.addList = function (){
+        let newList = {
+            items: ["?", "?", "?", "?", "?"],
+            name: "Untitled"+ store.newListCounter
+        }
+
+        async function asynceAddList(newList){
+            let response = await api.createTop5List(newList);
+            store.setCurrentList(response.data.top5List._id);
+        }
+
+        storeReducer({type: GlobalStoreActionType.ADD_LIST,
+        payload: {}})
+        // setStore(prev => {
+        //     return {...prev, newListCounter: prev.newListCounter++};
+        // })
+        console.log(store.newListCounter);
+        asynceAddList(newList); 
+        
+    }
 
     // THIS FUNCTION PROCESSES CHANGING A LIST NAME
     store.changeListName = function (id, newName) {

@@ -12,6 +12,10 @@ const ListSelector = () => {
     const { store } = useContext(GlobalStoreContext);
     store.history = useHistory();
 
+    let handleAdd = () => {
+        store.addList();
+    }
+
     useEffect(() => {
         store.loadIdNamePairs();
     }, []);
@@ -33,7 +37,8 @@ const ListSelector = () => {
                     type="button"
                     id="add-list-button"
                     className="top5-button"
-                    value="+" />
+                    value="+" 
+                    onClick={handleAdd}/>
                 Your Lists
             </div>
             <div id="list-selector-list">
