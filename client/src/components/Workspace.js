@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { useHistory } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
 import Top5Item from './Top5Item.js'
 import { GlobalStoreContext } from '../store'
 /*
@@ -10,7 +11,24 @@ import { GlobalStoreContext } from '../store'
 */
 function Workspace() {
     const { store } = useContext(GlobalStoreContext);
+    const [editActive, setEditActive] = useState(false);
     store.history = useHistory();
+
+    let changeActive = () => {
+        
+
+        if(!editActive){
+            for(let i=1; i <= 5; i++){
+                document.getElementById("edit-item-"+i).classList.add("list-card-button-disabled");
+            }
+        }else{
+            for(let i =1; i <= 5; i++){
+                document.getElementById("edit-item-"+i).classList.remove("list-card-button-disabled");
+            }
+        };
+
+        setEditActive(!editActive);
+    }
 
     let editItems = "";
     if (store.currentList) {
@@ -23,11 +41,13 @@ function Workspace() {
                             key={'top5-item-' + (index+1)}
                             text={item}
                             index={index} 
+                            changeActive = {changeActive}
                         />
                     ))
                 }
             </div>;
     }
+
     return (
         <div id="top5-workspace">
             <div id="workspace-edit">

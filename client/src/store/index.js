@@ -174,6 +174,9 @@ export const useGlobalStore = () => {
       type: GlobalStoreActionType.CLOSE_CURRENT_LIST,
       payload: {},
     });
+    store.disableCloseButton();
+    store.changeRedoButton();
+    store.changeUndoButton();
   };
 
   // THIS FUNCTION LOADS ALL THE ID, NAME PAIRS SO WE CAN LIST ALL THE LISTS
@@ -192,6 +195,9 @@ export const useGlobalStore = () => {
     }
 
     asyncLoadIdNamePairs();
+    store.disableCloseButton();
+    store.changeRedoButton();
+    store.changeUndoButton();
   };
 
   // THE FOLLOWING 8 FUNCTIONS ARE FOR COORDINATING THE UPDATING
@@ -215,6 +221,9 @@ export const useGlobalStore = () => {
       }
     }
     asyncSetCurrentList(id);
+    store.enableCloseButton();
+    store.changeRedoButton();
+    store.changeUndoButton();
   };
 
   store.hideDeleteListModal = function () {
@@ -252,6 +261,8 @@ export const useGlobalStore = () => {
   store.addMoveItemTransaction = function (start, end) {
     let transaction = new MoveItem_Transaction(store, start, end);
     tps.addTransaction(transaction);
+    store.changeRedoButton();
+    store.changeUndoButton();
   };
 
   store.addChangeItemTransaction = function (index, oldName, newName) {
@@ -262,6 +273,8 @@ export const useGlobalStore = () => {
       newName
     );
     tps.addTransaction(transaction);
+    store.changeRedoButton();
+    store.changeUndoButton();
   };
   store.moveItem = function (start, end) {
     start -= 1;
@@ -282,6 +295,9 @@ export const useGlobalStore = () => {
 
     // NOW MAKE IT OFFICIAL
     store.updateCurrentList();
+
+    store.changeRedoButton();
+    store.changeUndoButton();
   };
 
   store.showDeleteList = function (id) {
@@ -323,10 +339,46 @@ export const useGlobalStore = () => {
   };
   store.undo = function () {
     tps.undoTransaction();
+
+    store.changeRedoButton();
+    store.changeUndoButton();
   };
   store.redo = function () {
     tps.doTransaction();
+
+    store.changeRedoButton();
+    store.changeUndoButton();
   };
+
+  store.disableCloseButton = function (){
+    let button = document.getElementById("close-button");
+    button.classList.add("top5-button-disabled");
+  }
+
+  store.enableCloseButton = function(){
+    let button = document.getElementById("close-button");
+    button.classList.remove("top5-button-disabled");
+  }
+
+  store.changeRedoButton = function(){
+    if(!tps.hasTransactionToRedo()){
+        let button = document.getElementById("redo-button");
+        button.classList.add("top5-button-disabled");
+    }else{
+        let button = document.getElementById("redo-button");
+        button.classList.remove("top5-button-disabled");
+    }
+  }
+
+  store.changeUndoButton = function(){
+      if(!tps.hasTransactionToUndo()){
+          let button = document.getElementById("undo-button");
+          button.classList.add("top5-button-disabled");
+      }else{
+          let button = document.getElementById("undo-button");
+          button.classList.remove("top5-button-disabled");
+      }
+  }
 
   // THIS FUNCTION ENABLES THE PROCESS OF EDITING A LIST NAME
   store.setIsListNameEditActive = function () {

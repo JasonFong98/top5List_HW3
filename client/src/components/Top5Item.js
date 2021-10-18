@@ -44,6 +44,7 @@ function Top5Item(props) {
     }
 
     let handleEdit = () => {
+        props.changeActive();
         setEditItemActive(!editItemActive);
     }
 
@@ -54,7 +55,7 @@ function Top5Item(props) {
     }
 
     let handleBlur = (event) => {
-
+        props.changeActive();
         store.addChangeItemTransaction(index, props.text, text);
         handleEdit(event);
     }
@@ -95,7 +96,7 @@ function Top5Item(props) {
         >
             <input
                 type="button"
-                id={"edit-item-" + index + 1}
+                id={"edit-item-" + (index + 1)}
                 className="list-card-button"
                 value={"\u270E"}
                 onClick = {handleEdit}
